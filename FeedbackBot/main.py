@@ -127,7 +127,7 @@ DISCORD_GALLERY_ID = int(os.environ["DISCORD_GALLERY_ID"])
 
 
 @tree.command(guild=discord.Object(id=GUILD_ID), description=f"gather the top {top_count} sprites from the past week",)
-async def get_top_sprites(interaction: discord.Interaction):
+async def get_top_sprites(interaction: discord.Interaction, count_override: int = top_count):
     gallery = interaction.guild.get_channel(int(DISCORD_GALLERY_ID))
     now = dt.now(timezone.utc)
     week_ago = now - timedelta(days=8)
@@ -143,7 +143,7 @@ async def get_top_sprites(interaction: discord.Interaction):
         # api usage optimization: if the sum of all reaction.count is < the X most reacted to sprite,
         # we know that we can skip this message for the top X number sprites
         reaction_sum = sum(reaction.count for reaction in message.reactions)
-        if len(top_sprites) == top_count and reaction_sum < top_sprites[0][0]:
+        if len(top_sprites) == count_override and reaction_sum < top_sprites[0][0]:
             continue
         for reaction in message.reactions:
             try:
@@ -157,13 +157,13 @@ async def get_top_sprites(interaction: discord.Interaction):
                     raise e
 
         heapq.heappush(top_sprites, (len(reaction_ids), tiebreak_counter, message))
-        if len(top_sprites) > top_count:
+        if len(top_sprites) > count_override:
             heapq.heappop(top_sprites)
         tiebreak_counter += 1
 
     print([(item[2].content, item[0]) for item in top_sprites])
     output_message = ""
-    output_largest = heapq.nlargest(top_count, top_sprites, key=lambda x: x[0])
+    output_largest = heapq.nlargest(count_override, top_sprites, key=lambda x: x[0])
     output_messages = []
     for i in range(len(output_largest)):
         data_text = output_largest[i][2].content.replace("<#", "")
