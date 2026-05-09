@@ -78,8 +78,6 @@ async def feedbackpls(interaction: discord.Interaction):
                           "Don't forget to give feedback too!!!\n"
                           "you can opt out of this warning with the `/stop_feedback_warning` command.")
         await interaction.response.send_message(warning_string, ephemeral=True)
-    else:
-        await interaction.update()
     if thread.id in recently_used_channels:
         remaining_cooldown = recently_used_channels[thread.id] - dt.now(timezone.utc)
         output_string = f"This command has a cooldown in the same thread of {str(feedback_cooldown)}. Please wait {str(remaining_cooldown)}"
@@ -117,7 +115,10 @@ async def feedbackpls(interaction: discord.Interaction):
     # print([(user.name, user.status) for user in sample])
     tags = [f"<@{member.id}>" for member in sample]
     joined_tags = '\n'.join(tags)
-    await interaction.channel.send(f"THESE PEOPLE HAVE BEEN (forcefully) RECRUITED TO GIVE YOU FEEDBACK:\n{joined_tags}\n (feedbackers can get the Sprite Feedback Giver role removed if they don't want these pings)")
+    if interaction.user.id in warning_optout_list:
+        await interaction.response.send_message(f"THESE PEOPLE HAVE BEEN (forcefully) RECRUITED TO GIVE YOU FEEDBACK:\n{joined_tags}\n (feedbackers can get the Sprite Feedback Giver role removed if they don't want these pings)")
+    else:
+        await interaction.channel.send(f"THESE PEOPLE HAVE BEEN (forcefully) RECRUITED TO GIVE YOU FEEDBACK:\n{joined_tags}\n (feedbackers can get the Sprite Feedback Giver role removed if they don't want these pings)")
     # add it to recently_used_channels only after send_message is called, just in case it errors out (which is a thing)
     if thread is not None:
         recently_used_channels[thread.id] = dt.now(timezone.utc) + feedback_cooldown
