@@ -79,7 +79,7 @@ async def feedbackpls(interaction: discord.Interaction):
                           "you can opt out of this warning with the `/stop_feedback_warning` command.")
         await interaction.response.send_message(warning_string, ephemeral=True)
     else:
-        await interaction.response.update()
+        await interaction.update()
     if thread.id in recently_used_channels:
         remaining_cooldown = recently_used_channels[thread.id] - dt.now(timezone.utc)
         output_string = f"This command has a cooldown in the same thread of {str(feedback_cooldown)}. Please wait {str(remaining_cooldown)}"
