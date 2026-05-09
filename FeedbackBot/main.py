@@ -50,6 +50,7 @@ feedback_cooldown = timedelta(hours=6)
 @tree.command(guild=discord.Object(id=GUILD_ID), description=f"Stops you from receiving the feedback ping warning from feedbackpls.")
 async def stop_feedback_warning(interaction: discord.Interaction):
     warning_optout_list.add(interaction.user.id)
+    await interaction.response.send_message("You will no longer be told the same message over and over!", ephemeral=True)
 
 
 # noinspection PyUnresolvedReferences
