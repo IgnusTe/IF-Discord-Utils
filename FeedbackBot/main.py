@@ -44,9 +44,15 @@ tree = app_commands.CommandTree(feebas)
 sample_count = 7
 recently_used_channels = {}
 recent_feedback_requesters = {}
+warning_optout_list = set()
 feedback_cooldown = timedelta(hours=6)
 
+@tree.command(guild=discord.Object(id=GUILD_ID), description=f"Stops you from receiving the feedback ping warning from feedbackpls.")
+async def stop_feedback_warning(interaction: discord.Interaction):
+    warning_optout_list.add(interaction.user.id)
 
+
+# noinspection PyUnresolvedReferences
 @tree.command(guild=discord.Object(id=GUILD_ID), description=f"tag {sample_count} random members with the feedback giver role")
 async def feedbackpls(interaction: discord.Interaction):
     guild = interaction.guild
@@ -66,8 +72,11 @@ async def feedbackpls(interaction: discord.Interaction):
         recent_feedback_requesters[interaction.user.id] += 1
     else:
         recent_feedback_requesters[interaction.user.id] = 1
-
-    await interaction.response.send_message("By using this command, you'll be pinged in someone else's thread once. Don't forget to give feedback too!!!", ephemeral=True)
+    if interaction.user.id not in warning_optout_list:
+        warning_string = ("By using this command, you'll be pinged in someone else's thread once. "
+                          "Don't forget to give feedback too!!!\n"
+                          "you can opt out of this warning with the `/stop_feedback_warning` command.")
+        await interaction.response.send_message(warning_string, ephemeral=True)
     if thread.id in recently_used_channels:
         remaining_cooldown = recently_used_channels[thread.id] - dt.now(timezone.utc)
         output_string = f"This command has a cooldown in the same thread of {str(feedback_cooldown)}. Please wait {str(remaining_cooldown)}"
