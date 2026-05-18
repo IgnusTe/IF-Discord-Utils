@@ -73,16 +73,18 @@ async def feedbackpls(interaction: discord.Interaction):
         recent_feedback_requesters[interaction.user.id] += 1
     else:
         recent_feedback_requesters[interaction.user.id] = 1
-    if interaction.user.id not in warning_optout_list:
-        warning_string = ("By using this command, you'll be pinged in someone else's thread once. "
-                          "Don't forget to give feedback too!!!\n"
-                          "you can opt out of this warning with the `/stop_feedback_warning` command.")
-        await interaction.response.send_message(warning_string, ephemeral=True)
+        
     if thread.id in recently_used_channels:
         remaining_cooldown = recently_used_channels[thread.id] - dt.now(timezone.utc)
         output_string = f"This command has a cooldown in the same thread of {str(feedback_cooldown)}. Please wait {str(remaining_cooldown)}"
         await interaction.response.send_message(output_string, ephemeral=True)
         return
+    if interaction.user.id not in warning_optout_list:
+        warning_string = ("By using this command, you'll be pinged in someone else's thread once. "
+                          "Don't forget to give feedback too!!!\n"
+                          "you can opt out of this warning with the `/stop_feedback_warning` command.")
+        await interaction.response.send_message(warning_string, ephemeral=True)
+
 
     allowed_ping_statuses = [discord.Status.online, discord.Status.idle]
     ids = [member.id for member in role.members]
