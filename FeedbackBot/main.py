@@ -405,7 +405,11 @@ async def find_thread_counts(interaction: discord.Interaction):
     await interaction.response.send_message("working", ephemeral=True)
     for thread in channel.threads:
         if thread.last_message_id is not None:
-            last_message = await thread.fetch_message(thread.last_message_id)
+            try:
+                last_message = await thread.fetch_message(thread.last_message_id)
+            except discord.errors.NotFound:
+                print(f"bad message id for thread {thread}")
+                continue
             if last_message is not None:
                 if last_message.created_at < start_date:
                     necro_count += 1
