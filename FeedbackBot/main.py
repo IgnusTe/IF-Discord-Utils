@@ -417,7 +417,7 @@ async def find_thread_counts(interaction: discord.Interaction):
                     oldest_timestamp = last_message.created_at
     thread_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 8 hours: {necro_count}\n Oldest: {oldest_timestamp}"
     print(thread_count_debug)
-    await interaction.channel.send(thead_count_debug)
+    await interaction.channel.send(thread_count_debug)
 
 
 feebas.run(TOKEN)
