@@ -401,11 +401,14 @@ async def find_thread_counts(interaction: discord.Interaction):
     start_date = now - timedelta(hours=8)
     necro_count = 0
     oldest_timestamp = now
+    print(now)
     for thread in channel.threads:
-        if thread.last_message is not None and thread.last_message.created_at < start_date:
-            necro_count += 1
-        if thread.last_message is not None and thread.last_message.created_at < oldest_timestamp:
-            oldest_timestamp = thread.last_message.created_at
+        if thread.last_message is not None:
+            print(thread.last_message.created_at)
+            if thread.last_message.created_at < start_date:
+                necro_count += 1
+            if thread.last_message.created_at < oldest_timestamp:
+                oldest_timestamp = thread.last_message.created_at
     thead_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 8 hours: {necro_count}\n Oldest: {oldest_timestamp}"
 
     await interaction.response.send_message(thead_count_debug, ephemeral=False)
