@@ -398,7 +398,7 @@ async def find_thread_counts(interaction: discord.Interaction):
     guild = interaction.guild
     channel = guild.get_channel(DISCORD_SPRITEWORK_ID)
     now = dt.now(timezone.utc)
-    start_date = now - timedelta(hours=8)
+    start_date = now - timedelta(hours=24)
     necro_count = 0
     oldest_timestamp = now
     print(now)
@@ -418,7 +418,7 @@ async def find_thread_counts(interaction: discord.Interaction):
                     necro_count += 1
                 if last_message.created_at < oldest_timestamp:
                     oldest_timestamp = last_message.created_at
-    thread_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 8 hours: {necro_count}\n Oldest: {oldest_timestamp}"
+    thread_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 24 hours: {necro_count}\n Oldest: {oldest_timestamp}"
     print(thread_count_debug)
     await interaction.channel.send(thread_count_debug)
 
