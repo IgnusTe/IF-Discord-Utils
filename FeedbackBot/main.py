@@ -409,7 +409,7 @@ async def find_thread_counts(interaction: discord.Interaction):
         if thread.last_message_id is not None:
             last_message = await thread.fetch_message(thread.last_message_id)
             if last_message is not None:
-                print(thread.last_message.created_at)
+                print(last_message.created_at)
                 if last_message.created_at < start_date:
                     necro_count += 1
                 if last_message.created_at < oldest_timestamp:
