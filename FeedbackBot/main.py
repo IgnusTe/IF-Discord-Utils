@@ -402,21 +402,18 @@ async def find_thread_counts(interaction: discord.Interaction):
     necro_count = 0
     oldest_timestamp = now
     print(now)
+    await interaction.response.send_message("working", ephemeral=True)
     for thread in channel.threads:
-        print(thread)
-        print(thread.created_at)
-        print(thread.last_message_id)
         if thread.last_message_id is not None:
             last_message = await thread.fetch_message(thread.last_message_id)
             if last_message is not None:
-                print(last_message.created_at)
                 if last_message.created_at < start_date:
                     necro_count += 1
                 if last_message.created_at < oldest_timestamp:
                     oldest_timestamp = last_message.created_at
-        thead_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 8 hours: {necro_count}\n Oldest: {oldest_timestamp}"
+    thead_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 8 hours: {necro_count}\n Oldest: {oldest_timestamp}"
 
-    await interaction.response.send_message(thead_count_debug, ephemeral=False)
+    await interaction.channel.send(thead_count_debug)
 
 
 feebas.run(TOKEN)
