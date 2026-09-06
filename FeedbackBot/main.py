@@ -395,6 +395,7 @@ async def find_inactive_feedbackers(interaction: discord.Interaction, threshold:
 
 @tree.command(guild=discord.Object(id=GUILD_ID), description=f"Debug Command: check open thread count")
 async def find_thread_counts(interaction: discord.Interaction):
+    guild = interaction.guild
     channel = guild.get_channel(DISCORD_SPRITEWORK_ID)
     now = dt.now(timezone.utc)
     start_date = now + timedelta(days=7)
