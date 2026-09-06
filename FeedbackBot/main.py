@@ -393,5 +393,19 @@ async def find_inactive_feedbackers(interaction: discord.Interaction, threshold:
         await interaction.channel.send(final_output_message, silent=True)
 
 
+@tree.command(guild=discord.Object(id=GUILD_ID), description=f"Debug Command: check open thread count")
+async def find_thread_counts(interaction: discord.Interaction):
+    channel = guild.get_channel(DISCORD_SPRITEWORK_ID)
+    now = dt.now(timezone.utc)
+    start_date = now + timedelta(days=7)
+    necro_count = 0
+    for thread in channel.threads:
+        if thread.last_message is not None and thread.last_message.created_at < start_date:
+            necro_count += 1
+    thead_count_debug = f"Pulling active spritework threads. Count: {len(channel.threads)},\n threads with no active chats in 7 days: {necro_count}"
+
+    await interaction.response.send_message(thead_count_debug, ephemeral=False)
+
+
 feebas.run(TOKEN)
 
