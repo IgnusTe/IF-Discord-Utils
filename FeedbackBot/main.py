@@ -410,8 +410,8 @@ async def find_thread_counts(interaction: discord.Interaction):
             except discord.errors.NotFound:
                 print(f"bad message id for thread {thread}")
                 continue
-            except discord.errors.Forbidden:
-                print(f"forbidden thread {thread}")
+            except:
+                print(f"idk something else stupid {thread}")
                 continue
             if last_message is not None:
                 if last_message.created_at < start_date:
