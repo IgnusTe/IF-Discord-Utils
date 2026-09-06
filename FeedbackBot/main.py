@@ -422,6 +422,42 @@ async def find_thread_counts(interaction: discord.Interaction):
     print(thread_count_debug)
     await interaction.channel.send(thread_count_debug)
 
+@tree.command(guild=discord.Object(id=GUILD_ID), description=f"Debug Command: Close any thread with no comments in 24 hours")
+async def close_stale_threads(interaction: discord.Interaction):
+    guild = interaction.guild
+    channel = guild.get_channel(DISCORD_SPRITEWORK_ID)
+    now = dt.now(timezone.utc)
+    start_date = now - timedelta(hours=24)
+    necro_count = 0
+    oldest_timestamp = now
+    print(now)
+    await interaction.response.send_message("working", ephemeral=True)
+    thread_set = set()
+    for thread in channel.threads:
+        if thread.last_message_id is not None:
+            try:
+                last_message = await thread.fetch_message(thread.last_message_id)
+            except discord.errors.NotFound:
+                print(f"bad message id for thread {thread}")
+                continue
+            except:
+                print(f"idk something else stupid {thread}")
+                continue
+            if last_message is not None:
+                if last_message.created_at < start_date:
+                    thread_set.add(thread)
+                    necro_count += 1
+                if last_message.created_at < oldest_timestamp:
+                    oldest_timestamp = last_message.created_at
+    thread_count_debug = f"Active thread count: {len(channel.threads)},\n threads with no active chats in 24 hours: {necro_count}\n Oldest: {oldest_timestamp}\n Closing threads..."
+    await interaction.channel.send(thread_count_debug)
+    print(thread_count_debug)
+
+    for stale_thread in thread_set:
+        print(f"closing {stale_thread}")
+        await stale_thread.edit(archived=True)
+    await interaction.channel.send(f"Closed {len(thread_set)} threads")
+
 
 feebas.run(TOKEN)
 
